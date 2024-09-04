@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vms="clr-namespace:GoalieApp.ViewModels"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance vms:MainPageViewModel}"
              x:Class="GoalieApp.MainPage">
     <ScrollView>
         <VerticalStackLayout
@@ -15,13 +14,14 @@
                 <Label Text="Totals:" 
                        VerticalTextAlignment="Center"
                        Margin="5"/>
-                <Label Text="{Binding Count, Mode=OneWay}"
+                <Label Text="{Binding Saves, Mode=OneWay}"
                        VerticalTextAlignment="Center"/>
                 <Label Text="/"
                        VerticalTextAlignment="Center"/>
-                <Label Text="2"
+                <Label Text="{Binding Total, Mode=OneWay}"
                        VerticalTextAlignment="Center"/>
-                <Label Text="0.1"
+                <Label Text="{Binding Percentage, Mode=OneWay}"
+                       Margin="20,0,0,0"
                        VerticalTextAlignment="Center"/>
             </HorizontalStackLayout>
             <HorizontalStackLayout>
@@ -29,13 +29,13 @@
                        VerticalTextAlignment="Center"
                        Margin="5"/>
                 <Button Text="+"
-                        Command="{Binding GoalsChangeCommand}"
+                        Command="{Binding SavesChangeCommand}"
                         CommandParameter="1"
                         WidthRequest="100"
                         HeightRequest="100"
                         Margin="5"/>
                 <Button Text="-"
-                        Command="{Binding GoalsChangeCommand}"
+                        Command="{Binding SavesChangeCommand}"
                         CommandParameter="-1"
                         WidthRequest="100"
                         HeightRequest="100"
@@ -46,18 +46,19 @@
                        VerticalTextAlignment="Center"
                        Margin="5"/>
                 <Button Text="+"                
-                        Command="{Binding SavesChangeCommand}"
+                        Command="{Binding GoalsChangeCommand}"
                         CommandParameter="1"        
                         WidthRequest="100"
                         HeightRequest="100"
                         Margin="5"/>
                 <Button Text="-"
-                        Command="{Binding SavesChangeCommand}"
-                        CommandParameter="1"
+                        Command="{Binding GoalsChangeCommand}"
+                        CommandParameter="-1"
                         WidthRequest="100"
                         HeightRequest="100"
                         Margin="20,5,5,5"/>
             </HorizontalStackLayout>
+            <Button Text="Reset" Margin="15" Command="{Binding ResetCommand}"/>
             <!--<Image
                 Source="dotnet_bot.png"
                 HeightRequest="185"

@@ -4,9 +4,6 @@
 
 namespace GoalieApp.ViewModels;
 
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Android.OS.Strictmode;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 /// <summary>
@@ -23,36 +20,48 @@ public partial class MainPageViewModel : ObservableObject
     public MainPageViewModel()
     {
         this.GoalsChangeCommand = new(
-        value =>
+        (value) =>
         {
-            if (this.Goals == 0 && value < 0)
+            if (!int.TryParse(value?.ToString() ?? string.Empty, out var i) ||
+            (this.Goals == 0 && i < 0))
             {
                 return;
             }
 
-            this.Goals = (uint)(this.Goals + value);
+            this.Goals = (uint)(this.Goals + i);
         });
         this.SavesChangeCommand = new(
-        value =>
+        (value) =>
         {
-            if (this.Saves == 0 && value < 0)
+            if (!int.TryParse(value?.ToString() ?? string.Empty, out var i) ||
+            (this.Saves == 0 && i < 0))
             {
                 return;
             }
 
-            this.Saves = (uint)(this.Saves + value);
+            this.Saves = (uint)(this.Saves + i);
+        });
+        this.ResetCommand = new(() =>
+        {
+            this.Saves = 0;
+            this.Goals = 0;
         });
     }
 
     /// <summary>
+    /// Gets the reset command.
+    /// </summary>
+    public Command ResetCommand { get; }
+
+    /// <summary>
     /// Gets the goals change command.
     /// </summary>
-    public Command<int> GoalsChangeCommand { get; }
+    public Command GoalsChangeCommand { get; }
 
     /// <summary>
     /// Gets the saves change command.
     /// </summary>
-    public Command<int> SavesChangeCommand { get; }
+    public Command SavesChangeCommand { get; }
 
     /// <summary>
     /// Gets the total.
@@ -67,7 +76,7 @@ public partial class MainPageViewModel : ObservableObject
     /// </summary>
     public decimal Percentage
     {
-        get => this.Saves / this.Total;
+        get => this.Total == 0 ? 0 : Math.Round((decimal)this.Saves / (decimal)this.Total, 3);
     }
 
     /// <summary>

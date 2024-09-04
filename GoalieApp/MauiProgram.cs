@@ -4,6 +4,7 @@
 
 namespace GoalieApp;
 
+using GoalieApp.Database;
 using GoalieApp.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -29,6 +30,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<MainPageViewModel>();
         builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddSingleton<GoalieAppDatabase>();
 
 #if DEBUG
         builder.Logging.AddDebug();

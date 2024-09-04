@@ -4,21 +4,28 @@
 
 namespace GoalieApp.ViewModels;
 
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
+using GoalieApp.Database;
+using MvvmHelpers;
 
 /// <summary>
 /// Main page view model.
 /// </summary>
-public partial class MainPageViewModel : ObservableObject
+public partial class MainPageViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
+    private readonly GoalieAppDatabase database;
+
     private uint saves = 0;
     private uint goals = 0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainPageViewModel"/> class.
     /// </summary>
-    public MainPageViewModel()
+    /// <param name="database">Database.</param>
+    public MainPageViewModel(GoalieAppDatabase database)
     {
+        this.database = database;
         this.GoalsChangeCommand = new(
         (value) =>
         {
@@ -46,7 +53,38 @@ public partial class MainPageViewModel : ObservableObject
             this.Saves = 0;
             this.Goals = 0;
         });
+        this.NewCommand = new(async () =>
+        {
+            await Task.Yield();
+            if (this.database is not null)
+            {
+                await this.database.SaveSessionAsync(new());
+                this.SessionItems = new(await this.database.GetSessions() ?? []);
+                this.OnPropertyChanged(nameof(this.SessionItems));
+            }
+        });
+
+        Task.Run(
+            async () =>
+            {
+                if (this.database is not null &&
+                await this.database.GetSessions() is List<SessionItem> lst)
+                {
+                    this.SessionItems = new(lst);
+                }
+            })
+            .SafeFireAndForget();
     }
+
+    /// <summary>
+    /// Gets the new command.
+    /// </summary>
+    public AsyncRelayCommand NewCommand { get; }
+
+    /// <summary>
+    /// Gets or sets the session items.
+    /// </summary>
+    public ObservableCollection<SessionItem>? SessionItems { get; set; }
 
     /// <summary>
     /// Gets the reset command.
